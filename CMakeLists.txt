@@ -8,8 +8,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB files_cpp "sources/*.cpp")
 file(GLOB files_h "sources/*.h")
 
+file(GLOB su_cpp "external/smallUtils/stringex.cpp")
+
 add_executable(${PROJECT_NAME}
     ${files_cpp} ${files_h}
+    ${su_cpp}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE "external/smallUtils")

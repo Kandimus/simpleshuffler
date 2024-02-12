@@ -55,7 +55,6 @@ int main(int argc, const char** argv)
     return 0;
 }
 
-
 int doShuffle(const std::string& filename)
 {
     std::ifstream inFile(filename/*, std::ios_base::app*/);
