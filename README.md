@@ -1,2 +1,2 @@
 # simpleshuffler
-The simple shuffler for shuffling lines in source files
+A simple shuffler designed to shuffle lines in source code files
