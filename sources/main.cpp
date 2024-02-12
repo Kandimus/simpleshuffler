@@ -40,6 +40,20 @@ int main(int argc, const char** argv)
 
     std::vector<std::string> files;
 
+    if (files.empty())
+    {
+        printf("A simple shuffler designed to shuffle lines in source code files\n");
+        printf("version 1.0\n");
+        printf("usage: simpleshuffler [options and switches] files\n");
+        printf("Options and switches:\n");
+        printf("\t--thread,-t=<count>\t\t\trun on <count> threads\n");
+        printf("\t--begmarker,-m=<new begin marker>\tset a new begin marker, default is '%s'\n",
+               global::begMarker.c_str());
+        printf("\t--endmarker,-M=<new end marker>\t\tset a new end marker, default is '%s'\n",
+               global::endMarker.c_str());
+    }
+
+
     for (int ii = 0; ii < cl.getCountArgument(); ++ii)
     {
         files.push_back(cl.getArgument(ii));
