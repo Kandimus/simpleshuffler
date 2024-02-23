@@ -42,10 +42,15 @@ int main(int argc, const char** argv)
 
     std::vector<std::string> files;
 
+    for (int ii = 0; ii < cl.getCountArgument(); ++ii)
+    {
+        files.push_back(cl.getArgument(ii));
+    }
+
     if (files.empty() || cl.isSet(arg::HELP.first))
     {
-        printf("A simple shuffler designed to shuffle lines in source code files\n");
-        printf("version 1.0\n");
+        printf("A simple shuffler designed to shuffle lines in source code files (C) Toadman\n");
+        printf("version 1.1\n");
         printf("usage: simpleshuffler [options and switches] files\n");
         printf("Options and switches:\n");
         printf("\t--thread,-t=<count>\t\t\trun on <count> threads\n");
@@ -55,12 +60,6 @@ int main(int argc, const char** argv)
                global::endMarker.c_str());
 
         return 1;
-    }
-
-
-    for (int ii = 0; ii < cl.getCountArgument(); ++ii)
-    {
-        files.push_back(cl.getArgument(ii));
     }
 
     //TODO create thread_manager
@@ -73,8 +72,70 @@ int main(int argc, const char** argv)
     return 0;
 }
 
+bool checkShufflingQuality(const std::vector<std::string>& source, const std::vector<std::string>& dest)
+{
+    if (source.size() != dest.size())
+    {
+        printf("Error: size of a sourse buffer and a destination buffer is not equal!\n");
+        exit(1);
+    }
+
+    for (size_t ii = 0; ii < source.size(); ++ii)
+    {
+        if (source[ii] == dest[ii])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void smartShuffle(std::vector<std::string>& lines)
+{
+#ifndef _WIN32
+    std::random_device rd;
+    std::mt19937 g(rd());
+#endif
+
+    auto oldLines = lines;
+
+    size_t old_index = 0;
+    size_t new_index = 0;
+    double dRand = double(lines.size()) / double(RAND_MAX);
+
+    while (true)
+    {
+        
+#ifdef _WIN32
+        new_index = size_t(rand() * dRand);
+#else
+        new_index = g() * source.size() / RAND_MAX;
+#endif
+
+        if (new_index == old_index)
+        {
+            continue;
+        }
+
+        std::iter_swap(lines.begin() + old_index, lines.begin() + new_index);
+
+        if (checkShufflingQuality(oldLines, lines))
+        {
+            break;
+        }
+
+        if (++old_index >= lines.size())
+        {
+            old_index = 0;
+        }
+    }
+}
+
 int doShuffle(const std::string& filename)
 {
+    printf("Shuffling file: %s", filename.c_str());
+
     std::ifstream inFile(filename/*, std::ios_base::app*/);
 
     if (!inFile.is_open())
@@ -86,10 +147,6 @@ int doShuffle(const std::string& filename)
     std::stringstream inBuffer;
     std::stringstream outBuffer;
     std::vector<std::string> suffleLines;
-#ifndef _WIN32
-    std::random_device rd;
-    std::mt19937 g(rd());
-#endif
 
     inBuffer << inFile.rdbuf();
     inFile.close();
@@ -110,11 +167,8 @@ int doShuffle(const std::string& filename)
         {
             if (clearLine == global::endMarker)
             {
-#ifdef _WIN32
-                std::random_shuffle(suffleLines.begin(), suffleLines.end());
-#else
-                std::random_shuffle(suffleLines.begin(), suffleLines.end(), g);
-#endif
+                smartShuffle(suffleLines);
+
                 for (auto& item : suffleLines)
                 {
                     outBuffer << item << "\n";
