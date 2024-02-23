@@ -11,6 +11,7 @@
 
 namespace arg
 {
+const su::CommandLineOption HELP = { "help", 'h' };
 const su::CommandLineOption THEAD = {"thread", 't'};
 const su::CommandLineOption BEGMARKER = {"begmarker", 'm'};
 const su::CommandLineOption ENDMARKER = {"endmarker", 'M'};
@@ -28,7 +29,8 @@ int main(int argc, const char** argv)
 {
     su::CommandLine cl;
 
-    cl.addOption(arg::THEAD, "-1")
+    cl.addSwitch(arg::HELP)
+        .addOption(arg::THEAD, "-1")
         .addOption(arg::BEGMARKER, global::begMarker)
         .addOption(arg::ENDMARKER, global::endMarker)
         .parse(argc, argv);
@@ -40,7 +42,7 @@ int main(int argc, const char** argv)
 
     std::vector<std::string> files;
 
-    if (files.empty())
+    if (files.empty() || cl.isSet(arg::HELP.first))
     {
         printf("A simple shuffler designed to shuffle lines in source code files\n");
         printf("version 1.0\n");
@@ -51,6 +53,8 @@ int main(int argc, const char** argv)
                global::begMarker.c_str());
         printf("\t--endmarker,-M=<new end marker>\t\tset a new end marker, default is '%s'\n",
                global::endMarker.c_str());
+
+        return 1;
     }
 
 
