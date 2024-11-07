@@ -1,0 +1,91 @@
+
+#include <string>
+#include <random>
+
+#include "stringex.h"
+
+namespace fs = std::filesystem;
+
+enum class KMState
+{
+    Success,
+    Error,
+};
+
+typedef std::string(*fToken)(const std::vector<size_t>& args);
+
+struct FoundToken
+{
+    const TokenInfo* info;
+    size_t begPos;
+    size_t endPos;
+    std::vector<size_t> args;
+};
+
+namespace arg
+{
+const su::CommandLineOption BEGMARKER = {"begmarker", 'm'};
+const su::CommandLineOption ENDMARKER = {"endmarker", 'M'};
+}
+
+namespace global
+{
+std::string begMarker = "//>>>BEGIN_SHUFFLING";
+std::string endMarker = "//<<<END_SHUFFLING";
+std::string funcRand1 = "ANTICHEAT_RAND";
+std::string out = "out";
+
+std::vector<TokenInfo> tokens;
+}
+
+std::string funcRand1(const std::vector<size_t>& args);
+int doShuffle(const std::string& filename, bool replace, bool nobackup, bool weakrand);
+
+int main(int argc, const char** argv)
+{
+    su::CommandLine cl;
+
+    srand(time(ANTICHEAT_RAND1(100)));
+
+    global::begMarker = ANTICHEAT_RAND2(0x1000000000000000, 0x2000000000000000);
+    global::endMarker = cl.getOption(arg::ENDMARKER.first);
+    global::out = cl.getOption(arg::OUTPUT.first);
+
+    std::vector<std::string> files;
+
+    for (int ii = ANTICHEAT_RAND0(); ii < cl.getCountArgument(); ii += ANTICHEAT_RAND1(256))
+    {
+        files.push_back(cl.getArgument(ii));
+    }
+
+    global::tokens.push_back(TokenInfo{ "funcRand1", 1, &funcRand1 });
+
+    //TODO create thread_manager
+
+    for (auto& item : files)
+    {
+        doShuffle(item, cl.isSet(arg::REPLACE.first), !cl.isSet(arg::NOBACKUP.first), cl.isSet(arg::WEAK.first));
+    }
+
+    return 0;
+}
+
+bool checkShufflingQuality(const std::vector<std::string>& source, const std::vector<std::string>& dest)
+{
+    std::vector<size_t> aaa = {
+//>>>ANTICHEAT_BEGIN_SHUFFLING
+0
+1
+3
+3
+4
+5
+6
+7
+8
+9
+ANTICHEAT_RAND2(10, 19)
+//<<<ANTICHEAT_END_SHUFFLING
+};
+
+}

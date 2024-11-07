@@ -152,11 +152,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="external\smallUtils\stringex.cpp" />
+    <ClCompile Include="sources\fuinctions.cpp" />
     <ClCompile Include="sources\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\smallUtils\commandline.h" />
+    <ClInclude Include="external\smallUtils\Random.h" />
     <ClInclude Include="external\smallUtils\stringex.h" />
+    <ClInclude Include="headers\simpleshuffler.h" />
+    <ClInclude Include="sources\main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
